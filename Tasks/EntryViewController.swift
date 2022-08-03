@@ -10,7 +10,6 @@ import UIKit
 class EntryViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet var field : UITextField!
-    var update: (() -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,19 +23,15 @@ class EntryViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func saveTask() {
+        
+        var tasks = UserDefaults().stringArray(forKey: "tasks")  ?? [String]()
+        
         guard  let text = field.text, !text.isEmpty else {
             return
         }
         
-        guard let count = UserDefaults().value(forKey: "count") as? Int else {
-            return
-        }
-        
-        let newCount = count + 1
-        UserDefaults().set(newCount, forKey: "count")
-        UserDefaults().setValue(text , forKey: "task_\(newCount)")
-        
-        update?()
+        tasks.append(text)
+        UserDefaults().set(tasks , forKey: "tasks")
         navigationController?.popViewController(animated: true)
     }
 }

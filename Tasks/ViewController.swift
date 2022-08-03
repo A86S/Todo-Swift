@@ -22,11 +22,8 @@ class ViewController: UIViewController {
         // setup local data
         if !UserDefaults().bool(forKey: "setup") {
             UserDefaults().set(true, forKey: "setup")
-            UserDefaults().set(0, forKey: "count")
+            UserDefaults().set(tasks, forKey: "tasks")
         }
-        
-        // get all current saved task
-        updateTask()	
     }
 }
 
@@ -43,33 +40,17 @@ extension ViewController : UITableViewDelegate {
     }
     
     func updateTask() {
-        
-        tasks.removeAll()
-        		
-        guard let count = UserDefaults().value(forKey: "count") as? Int else {
-            return
-        }
-        
-        for item in 0..<count {
-            if let task = UserDefaults().value(forKey: "task_\(item+1)") as? String {
-                tasks.append(task)
-            }
-        }
-        
-        print("Update Task")
+        tasks = UserDefaults().stringArray(forKey: "tasks")  ?? [String]()
         tableView.reloadData()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        updateTask()
     }
     
     @IBAction func didTapAdd() {
         let vc = storyboard?.instantiateViewController(identifier: "entry") as! EntryViewController
         vc.title = "New Task"
-        
-        vc.update = {
-          DispatchQueue.main.async {
-                self.updateTask()
-          }
-        }
-        
         navigationController?.pushViewController(vc, animated: true)
     }
 }

@@ -18,21 +18,17 @@ class TaskViewController: UIViewController {
         super.viewDidLoad()
     
         label.text = task
-        print("Index", index!)
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Delete", style: .done, target: self, action: #selector(deleteTask))
     }
     
     @objc func deleteTask() {
        
-        guard let count = UserDefaults().value(forKey: "count") as? Int else {
-            return
-        }
+        var tasks = UserDefaults().stringArray(forKey: "tasks")  ?? [String]()
+        tasks.remove(at: self.index!)
         
-        let newCount = count - 1
-        UserDefaults().setValue(newCount, forKey: "count")
-        UserDefaults().removeObject(forKey: "task_\(index!)")
-        
+        UserDefaults().set(tasks, forKey: "tasks")
+        UserDefaults().synchronize()
         navigationController?.popViewController(animated: true)
     }
 }
